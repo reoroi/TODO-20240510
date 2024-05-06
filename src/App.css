@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans+JP');
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  color: #666;
+  
+}
+.all-todo{
+  max-width: 480px;
+  padding: 0.5em 1em;
+  margin: 2em 0;
+  color: #5d627b;
+  background: white;
+  border-top: solid 5px #5d627b;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.22);  
+}
+.TODO{
+  font-family: 'Noto Sans JP', sans-serif;
+  text-align: center;
+}
+input {
+  margin: 8px;
+  border-radius: 8px;
+  border: none;
+  padding: 6px 16px;
+}
+
+button {
+  text-align: center;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	width: auto;
+	margin: 0;
+	padding: auto;
+	font-weight: bold;
+	border: 2px solid #868989;
+	color: #acadad;
+	border-radius:  16px;
+	transition: 0.5s;
+}
+
+button:hover {
+  background-color: #fbfbfb;
+  color: #585858;
+  cursor: pointer;
+}
+
+input{
+  margin: 4px;
+}
+.input-area {
+  max-width: 100%;
+  background-color: #bdbdbd;
+  width:  300px ;
+  padding: 8px;
+  margin: 8px;
+  border-radius:  8px;
+}
+
+.incomplete-area {
+  border: 2px solid #919397;
+  background-color: #dcdcdc;
+  width: 400px;
+  min-height: 200px;
+  padding: 8px;
+  margin: 8px;
+  border-radius: 8px;
+}
+
+.complete-area {
+  border: 2px solid #c7cdd2;
+  background-color: #f5f8fa;
+  width: 400px;
+  min-height: 200px;
+  padding: 8px;
+  margin: 8px;
+  border-radius: 8px;
+}
+.p-index{
+  margin-right: 8px;
+}
+
+.title {
+  text-align: center;
+  margin-top: 0;
+  font-weight: bold;
+}
+
+.list-row {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  justify-content: ce;
+}
+.dueDateP{
+  margin-left: auto; 
+  margin-right: 0; 
+}
+
+
+.todo-item {
+  margin: 6px;
+}
+
+.overdue{
+  background-color: #ffff66;
+  color: #ff3333;
+  border: 2px solid #ff3333;
+
+}
