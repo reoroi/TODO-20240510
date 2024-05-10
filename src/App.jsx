@@ -7,18 +7,19 @@ export const App = () => {
   // useState---------------------------------------
   const [todoText, setTodoText] = useState("");
   const [todoIncomplete, setTodoIncomplete] = useState({
-    TODO1:{ date:"20230211",isOverdueDate:false},
-    TODO2: {date:"20251106",isOverdueDate:false}
+    TODO1: { date: "20230211", isOverdueDate: false },
+    TODO2: { date: "20251106", isOverdueDate: false },
+    TODO3: { date: "20251106", isOverdueDate: false },
+
   });
   const [todoComplete, setTodoComplete] = useState({
-    完了1:{ date:"20240427",isOverdueDate:false},
-    完了2:{ date:"20251106",isOverdueDate:false}
+    完了1: { date: "20240427", isOverdueDate: false },
+    完了2: { date: "20251106", isOverdueDate: false },
   });
   const [switching, setSwitching] = useState(true);
   const [dueDate, setdueDate] = useState("");
-//--------------------------------------------------
+  //--------------------------------------------------
 
-  let flg = true; //correctInputCheckの判定フラグ
 
   //inputのテキスト反映
   const onChangeTodoText = (event) => setTodoText(event.target.value);
@@ -39,30 +40,40 @@ export const App = () => {
     // 年・月・日・曜日を取得
     const currentDate = new Date(); //現在日付
     //期限が過ぎてるものを入れる変数
-    let overdue=[]//期限切れの日付格納変数
-
-
+    let alertMessge=false
     // 日付が過ぎているものを全て調べる
-    Object.keys(todoIncomplete).forEach((key,index) => {
-      const date = todoIncomplete[key].date; //todoIncompleteの日付を持って来る
-      console.log(JSON.stringify(todoIncomplete[key], null, 2)+'これはtodoIncomplete[key]の中身です');
-      console.log(date+'これは日付になります')      
-      const year = date.slice(0, 4);
-      const month = date.slice(4, 6);
-      const day = date.slice(6, 8);
-      const todoDate = new Date(year, month - 1, day); // TODOの日付をDateオブジェクトとして作成
-      console.log(todoDate+'todoIncompleteの各日付です')
-      if (todoDate< currentDate) {
-        // ここで期限切れ日付isOverdueDateをtrueにする
-        overdue = {...todoIncomplete, [key]: {...todoIncomplete[key], isOverdueDate: true}};
-      } 
-    } 
-    );    
-    setTodoIncomplete(overdue)
-
+    const updateTodos = Object.keys(todoIncomplete).reduce((overdueDate, key) => {
+      const item = { ...todoIncomplete[key] };
+      const { date } = item;
+      
+        console.log(
+          JSON.stringify(overdueDate, null, 2) +  "これはtodoIncomplete[key]の中身です"
+        );
+        const year = date.slice(0, 4);
+        const month = date.slice(4, 6);
+        const day = date.slice(6, 8);
+        const todoDate = new Date(year, month - 1, day); // TODOの日付をDateオブジェクトとして作成
+        if (todoDate < currentDate) {
+          // ここで期限切れ日付isOverdueDateをtrueにする
+          item.isOverdueDate=true;
+          alertMessge=true
+        }else{
+          item.isOverdueDate=false;
+        }
+        overdueDate[key] = item;
+        return overdueDate;
+      },{});
+      if(alertMessge){
+        alert('期限切れがのものがあります。確認してください')
+      }else{
+        alert('期限切れのものはありません')
+      }
+    setTodoIncomplete(updateTodos)
     
   };
-  console.log(JSON.stringify(todoIncomplete, null, 2)+'これはtodoIncompleteのtrue');
+  console.log(
+    JSON.stringify(todoIncomplete, null, 2) + "これはtodoIncompleteのtrue"
+  );
 
   // 日付のフォーマット処理
   const formatDate = (date) => {
@@ -75,6 +86,7 @@ export const App = () => {
     return formattedDate;
   };
 
+  let flg = true; //correctInputCheckの判定フラグ
   //フォーマットチェック関数
   const correctInputCheck = () => {
     if (todoText === "") {
@@ -99,7 +111,10 @@ export const App = () => {
     correctInputCheck();
     if (!flg) {
       //flgがtrueなら実行する
-      const newTodo = { ...todoIncomplete, [todoText]: {date:dueDate,isOverdueDate:false} };
+      const newTodo = {
+        ...todoIncomplete,
+        [todoText]: { date: dueDate, isOverdueDate: false },
+      };
       setTodoIncomplete(newTodo);
       setTodoText("");
       setdueDate("");
@@ -109,7 +124,7 @@ export const App = () => {
   // 完了クリック処理
   const clickTodoComplete = (index) => {
     const keys = Object.keys(todoIncomplete); // オブジェクトのすべてのキーを取得
-    console.log(keys+"keysのすべてが入っています")
+    console.log(keys + "keysのすべてが入っています");
     const key = keys[index]; // 正しいキーをインデックスから取得(TODO)
     const date = todoIncomplete[key]; // キーに基づいた値を取得(日付)
 
@@ -174,25 +189,29 @@ export const App = () => {
           <div className="incomplete-area">
             <p className="title">未着手のTODO一覧</p>
             <ul>
-              {Object.entries(todoIncomplete).map(([key, {date,isOverdueDate}], index) => {
-                return (
-                  <li key={key} className={isOverdueDate?'overdue':''}>   {/*className={overdueDate?'overdue':''}   overdyeDateがtrueになればclassNameを付与する*/}
-                    <div className="list-row">
-                      {/* {checkExpiration(index)} */}
-                      <p className="p-index">{index}</p>
-                      <p>：</p>
-                      <p className="todo-item">{key}</p>
-                      <button onClick={() => clickTodoComplete(index)}>
-                        完了
-                      </button>
-                      <button onClick={() => clickTodoDelete(index)}>
-                        削除
-                      </button>
-                      <p className="dueDateP">期限{formatDate(date)}</p>
-                    </div>
-                  </li>
-                );
-              })}
+              {Object.entries(todoIncomplete).map(
+                ([key, { date, isOverdueDate }], index) => {
+                  return (
+                    <li key={key} className={isOverdueDate ? "overdue" : ""}>
+                      {" "}
+                      {/*className={overdueDate?'overdue':''}   overdyeDateがtrueになればclassNameを付与する*/}
+                      <div className="list-row">
+                        {/* {checkExpiration(index)} */}
+                        <p className="p-index">{index}</p>
+                        <p>：</p>
+                        <p className="todo-item">{key}</p>
+                        <button onClick={() => clickTodoComplete(index)}>
+                          完了
+                        </button>
+                        <button onClick={() => clickTodoDelete(index)}>
+                          削除
+                        </button>
+                        <p className="dueDateP">期限{formatDate(date)}</p>
+                      </div>
+                    </li>
+                  );
+                }
+              )}
             </ul>
           </div>
         )}
@@ -200,21 +219,23 @@ export const App = () => {
           <div className="complete-area">
             <p className="title">完了のTODO一覧</p>
             <ul>
-              {Object.entries(todoComplete).map(([key, {date,isOverdueDate}], index) => {
-                return (
-                  <li key={key}>
-                    <div className="list-row">
-                      <p className="p-index">{index}</p>
-                      <p>：</p>
-                      <p className="todo-item">{key}</p>
-                      <button onClick={() => clickNotStarted(index)}>
-                        未着手
-                      </button>
-                      <p className="dueDateP">期限{formatDate(date)}</p>
-                    </div>
-                  </li>
-                );
-              })}
+              {Object.entries(todoComplete).map(
+                ([key, { date, isOverdueDate }], index) => {
+                  return (
+                    <li key={key}>
+                      <div className="list-row">
+                        <p className="p-index">{index}</p>
+                        <p>：</p>
+                        <p className="todo-item">{key}</p>
+                        <button onClick={() => clickNotStarted(index)}>
+                          未着手
+                        </button>
+                        <p className="dueDateP">期限{formatDate(date)}</p>
+                      </div>
+                    </li>
+                  );
+                }
+              )}
             </ul>
           </div>
         )}
